@@ -1,24 +1,20 @@
-import logo from './logo.svg';
+import { styled } from 'styled-components';
+
 import './App.css';
+import MenuPanel from './containers/MenuPanel';
+import Orders from './containers/Orders';
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: ${props => props.width >= 750 ? 'row' : 'column'};
+`;
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Container width={window.innerWidth}>
+      <Orders/>
+      <MenuPanel/>
+    </Container>
   );
 }
 
