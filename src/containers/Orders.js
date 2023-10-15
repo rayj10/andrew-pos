@@ -9,7 +9,7 @@ const Container = styled.div`
     flex-direction: column;
     margin: 10px;
     border: 1px dashed #808080;
-    width: 30%;
+    width: ${props => props.width >= 750 ? '30%' : '60%'};
     height: 580px;
 `;
 
@@ -54,7 +54,7 @@ class Orders extends React.Component{
     }
 
     render(){
-        return <Container>
+        return <Container width={window.innerWidth}>
             <Title>Items</Title>
             <Divider/>
             <Details>
