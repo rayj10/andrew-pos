@@ -12,7 +12,7 @@ const Panel = styled.div`
     flex-direction: column;
     margin: 10px;
     border: 1px solid #808080;
-    width: 90%;
+    width: ${window.innerWidth >= 750 ? '70%' : '90%'};
     height: 90%;
     align-items: start;
     padding: 5px;
@@ -56,7 +56,7 @@ class MenuPanel extends React.Component {
     }
 
     render() {
-        return <Panel>
+        return <Panel className='menu-panel'>
             <Filter filterBy={this.state.filterBy} onFilter={this.handleFilter.bind(this)}/>
             {
                 Object.keys(CATEGORY).map(id => {

@@ -6,12 +6,12 @@ import Orders from './containers/Orders';
 
 const Container = styled.div`
   display: flex;
-  flex-direction: ${props => props.width >= 750 ? 'row' : 'column'};
+  flex-direction: ${window.innerWidth >= 750 ? 'row' : 'column'};
 `;
 
 function App() {
   return (
-    <Container width={window.innerWidth}>
+    <Container>
       <Orders/>
       <MenuPanel/>
     </Container>

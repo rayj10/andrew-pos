@@ -3,14 +3,21 @@ import { styled } from 'styled-components';
 import { connect } from 'react-redux'
 
 import OrderEntry from '../components/OrderEntry';
+import ActionButtons from './ActionButtons';
 
 const Container = styled.div`
+    display: flex;
+    flex-direction: ${window.innerWidth >= 750 ? 'column' : 'row'};
+    width: ${window.innerWidth >= 750 ? '30%' : '80%'};
+`;
+
+const OrderContainer = styled.div`
     display: flex;
     flex-direction: column;
     margin: 10px;
     border: 1px dashed #808080;
-    width: ${props => props.width >= 750 ? '30%' : '60%'};
     height: 580px;
+    width: ${window.innerWidth < 750 ? '100%' : null};
 `;
 
 const Title = styled.h4`
@@ -43,6 +50,13 @@ const mapStateToProps = state => ({
 });
 
 class Orders extends React.Component{
+    constructor(props) {
+        super(props);
+        this.state = {
+            selectedOrder: null
+        };
+    }
+
     calculateTotal = () => {
         let total = 0;
 
@@ -54,21 +68,29 @@ class Orders extends React.Component{
     }
 
     render(){
-        return <Container width={window.innerWidth}>
-            <Title>Items</Title>
-            <Divider/>
-            <Details>
-                {
-                    this.props.orderLine.map((item, idx) => {
-                        return <OrderEntry key={idx} {...item}/>
-                    })
-                }
-            </Details>
-            <Divider/>
-            <Total>
-                <label>{'TOTAL:'}</label>
-                <label>{`$${this.calculateTotal()}`}</label>
-            </Total>
+        return <Container className='order-manager'>
+            <OrderContainer>
+                <Title>Items</Title>
+                <Divider/>
+                <Details>
+                    {
+                        this.props.orderLine.map((item, idx) => {
+                            return <OrderEntry 
+                                key={idx} 
+                                {...item}
+                                onClick={()=>this.setState({selectedOrder: idx})}
+                                selected={this.state.selectedOrder === idx}
+                            />
+                        })
+                    }
+                </Details>
+                <Divider/>
+                <Total>
+                    <label>{'TOTAL:'}</label>
+                    <label>{`$${this.calculateTotal()}`}</label>
+                </Total>
+            </OrderContainer>
+            <ActionButtons selectedOrder={this.state.selectedOrder}/>
         </Container>
     }
 }

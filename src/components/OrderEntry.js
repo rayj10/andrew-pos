@@ -5,16 +5,18 @@ const Container = styled.div`
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    border: '1px solid #808080';
     padding-inline: 10px;
-    margin-block: 3px;
+    padding-block: 3px;
+    background-color: ${props => props.selected ? '#3AAFDC' : null};
 `;
 
 export default function OrderEntry({
     name,
-    price
+    price,
+    selected,
+    onClick
 }){
-    return <Container>
+    return <Container selected={selected} onClick={onClick}>
         <label>{name}</label>
         <label>{`$${price}`}</label>
     </Container>
