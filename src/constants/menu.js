@@ -153,6 +153,10 @@ export const MENU = {
             {
                 name: "GF",
                 price: 4
+            },
+            {
+                name: "Small & Can Combo",
+                price: 8
             }
         ],
         [
