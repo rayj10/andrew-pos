@@ -2,10 +2,12 @@ import * as React from 'react';
 import { styled } from 'styled-components';
 import { connect } from 'react-redux'
 
-import { CATEGORY, CATEGORY_WITH_EXTRAS, MENU } from '../constants/menu';
+import { CATEGORY, CATEGORY_WITH_EXTRAS, MENU_STRUCT } from '../constants/menu';
 import MenuButton from '../components/MenuButton';
 import Filter from './Filter';
 import { addOrder } from '../slice/OrderSlice';
+import { updateMenuList } from '../slice/MenuSlice';
+import { getMenu } from '../functions/firebase';
 
 const Panel = styled.div`
     display: flex;
@@ -36,15 +38,47 @@ const Title = styled.h4`
 `;
 
 const mapDispatchToProps = { 
-    addOrder
+    addOrder,
+    updateMenuList
 };
 
 class MenuPanel extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            filterBy: "all"
+            filterBy: "all",
+            formattedMenu: {}
         };
+    }
+
+    componentDidMount(){
+        getMenu()
+            .then(menu => {
+                let formattedMenu = this.formatMenu(menu);
+                this.setState({formattedMenu});
+                this.props.updateMenuList(formattedMenu);
+            })
+            .catch(e =>
+                alert(JSON.stringify(e))
+            );
+    }
+
+    formatMenu(menu = []){
+        let formattedMenu = {};
+
+        menu.forEach(item => {
+            //if category doesn't exists
+            if (!formattedMenu[item.category])
+                formattedMenu[item.category] = {};
+
+            //if subcategory doesn't exists
+            if (!formattedMenu[item.category][item.sub])
+             formattedMenu[item.category][item.sub] = [];
+
+            formattedMenu[item.category][item.sub].push(item);
+        });
+
+        return formattedMenu;
     }
 
     handleFilter = (filterBy) => {
@@ -56,25 +90,28 @@ class MenuPanel extends React.Component {
     }
 
     render() {
+        let { formattedMenu, filterBy } = this.state;
+
         return <Panel className='menu-panel'>
-            <Filter filterBy={this.state.filterBy} onFilter={this.handleFilter.bind(this)}/>
+            <Filter filterBy={filterBy} onFilter={this.handleFilter.bind(this)}/>
             {
                 Object.keys(CATEGORY).map(id => {
                     if (
-                        this.state.filterBy === 'all' || 
-                        id === this.state.filterBy ||
-                        (CATEGORY[id] === CATEGORY.extras && CATEGORY_WITH_EXTRAS.includes(CATEGORY[this.state.filterBy]))
+                        filterBy === 'all' || 
+                        id === filterBy ||
+                        (CATEGORY[id] === CATEGORY.extras && CATEGORY_WITH_EXTRAS.includes(CATEGORY[filterBy]))
                     )
                         return <div key={id}>
                             <Title>{CATEGORY[id]}</Title>
                             <Category>
                                 {
-                                    MENU[CATEGORY[id]].map((sub, subIdx) => {
-                                        return <SubCategory key={subIdx}>
+                                    MENU_STRUCT[CATEGORY[id]].map(subId => {
+                                        return <SubCategory key={subId}>
                                             {
-                                                sub.map((menu, menuIdx) => {
+                                                Object.keys(formattedMenu).length > 0 &&
+                                                formattedMenu[CATEGORY[id]][subId].map(menu => {
                                                     return <MenuButton
-                                                        key={`${menu}-${menuIdx}`}
+                                                        key={menu.id}
                                                         {...menu}
                                                         category={CATEGORY[id]}
                                                         onClick={this.handleMenuAdd.bind(this)}
