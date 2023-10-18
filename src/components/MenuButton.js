@@ -21,22 +21,20 @@ const Price = styled.label`
 `;
 
 export default function MenuButton({
-    name,
-    price,
-    category,
+    menu,
     onClick
 }){
     return <Button 
         variant="contained" 
-        onClick={() => onClick(name, price)}
+        onClick={() => onClick(menu)}
         style={{
-            backgroundColor: COLOR_CODE[category],
+            backgroundColor: COLOR_CODE[menu.category],
             margin: 5
         }}
     >
         <StyledDiv>
-            {name}
-            <Price>{`$${price}`}</Price>
+            {menu.name}
+            <Price>{`$${menu.price}`}</Price>
         </StyledDiv>
   </Button>;
 };

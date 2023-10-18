@@ -1,20 +1,16 @@
-import { styled } from 'styled-components';
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-import './App.css';
-import MenuPanel from './containers/MenuPanel';
-import Orders from './containers/Orders';
-
-const Container = styled.div`
-  display: flex;
-  flex-direction: ${window.innerWidth >= 750 ? 'row' : 'column'};
-`;
+import Main from './containers/Main';
+import Admin from './containers/Admin';
 
 function App() {
   return (
-    <Container>
-      <Orders/>
-      <MenuPanel/>
-    </Container>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/andrew-pos" element={<Main/>}/>
+        <Route path="/andrew-pos/admin" element={<Admin/>}/>
+      </Routes>
+    </BrowserRouter>
   );
 }
 

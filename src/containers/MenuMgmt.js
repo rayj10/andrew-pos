@@ -15,7 +15,8 @@ const Panel = styled.div`
     flex-direction: column;
     margin: 10px;
     border: 1px solid #808080;
-    width: ${window.innerWidth >= 750 ? '70%' : '90%'};
+    width: 70%;
+    margin-inline: ${window.innerWidth >= 750 ? '20px' : '10px'};
     height: 90%;
     align-items: start;
     padding: 5px;
@@ -47,7 +48,7 @@ const mapStateToProps = state => ({
     menuList: state.menu.menuList
 });
 
-class MenuPanel extends React.Component {
+class MenuMgmt extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -77,8 +78,8 @@ class MenuPanel extends React.Component {
         this.setState({filterBy});
     }
 
-    handleMenuAdd = ({name, price}) => {
-        this.props.addOrder({name, price});
+    handleMenuEdit = (menu) => {
+       alert(JSON.stringify(menu))
     }
 
     render() {
@@ -105,7 +106,7 @@ class MenuPanel extends React.Component {
                                                     return <MenuButton
                                                         key={menu.id}
                                                         menu={menu}
-                                                        onClick={this.handleMenuAdd.bind(this)}
+                                                        onClick={this.handleMenuEdit.bind(this)}
                                                     />
                                                 })
                                             }
@@ -120,4 +121,4 @@ class MenuPanel extends React.Component {
         </Panel>
     }
 }
-export default connect(mapStateToProps, mapDispatchToProps)(MenuPanel)
+export default connect(mapStateToProps, mapDispatchToProps)(MenuMgmt)

@@ -3,8 +3,10 @@ import Button from '@mui/material/Button';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import UndoIcon from '@mui/icons-material/Undo';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import SettingsIcon from '@mui/icons-material/Settings';
 import { connect } from 'react-redux'
 import { styled } from 'styled-components';
+import { Navigate } from "react-router-dom"
 
 import { removeLastEntry, resetOrder, deleteEntry } from '../slice/OrderSlice';
 
@@ -19,11 +21,22 @@ const Container = styled.div`
 `;
 
 class ActionButtons extends React.Component{
+    constructor(props) {
+        super(props);
+        this.state = {
+            redirect: false
+        };
+    }
+
     render(){
         return <Container>
+            { 
+                this.state.redirect && 
+                <Navigate to='/andrew-pos/admin' replace={true}/>
+            }
             <Button 
                 variant="contained" 
-                onClick={() => this.props.resetOrder()}
+                onClick={this.props.resetOrder}
                 style={{
                     backgroundColor: '#009DC4',
                     margin: 5,
@@ -34,7 +47,7 @@ class ActionButtons extends React.Component{
             </Button>
             <Button 
                 variant="contained" 
-                onClick={() => this.props.removeLastEntry()}
+                onClick={this.props.removeLastEntry}
                 style={{
                     backgroundColor: '#FEDC56',
                     margin: 5,
@@ -53,6 +66,17 @@ class ActionButtons extends React.Component{
                 }}
             >
                 <DeleteOutlineIcon/>
+            </Button>
+            <Button 
+                variant="contained" 
+                onClick={() => this.setState({redirect: true})}
+                style={{
+                    backgroundColor: '#737373',
+                    margin: 5,
+                    height: 50
+                }}
+            >
+                <SettingsIcon/>
             </Button>
         </Container>
     }
