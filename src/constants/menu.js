@@ -4,6 +4,7 @@ export const CATEGORY = {
     souvlaki: "Souvlakis",
     extras: "Extras",
     sides: "Sides",
+    rolls: "Rolls",
     drinks: "Drinks"
 }
 
@@ -50,6 +51,9 @@ export const MENU_STRUCT = {
         SUBCATEGORY.chips,
         SUBCATEGORY.snack
     ],
+    [CATEGORY.rolls]: [
+        SUBCATEGORY.standard,
+    ],
     [CATEGORY.drinks]: [
         SUBCATEGORY.basicDrink,
         SUBCATEGORY.water,
@@ -63,6 +67,7 @@ export const COLOR_CODE = {
     [CATEGORY.souvlaki]: "#016064",
     [CATEGORY.extras]: "#FCD12A",
     [CATEGORY.sides]: "#FF7900",
+    [CATEGORY.rolls]: '#D0B49F',
     [CATEGORY.drinks]: "#95C8D8"
 };
 

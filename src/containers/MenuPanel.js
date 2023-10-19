@@ -101,7 +101,7 @@ class MenuPanel extends React.Component {
 
     renderCategory(catId){
         let { formattedMenu, filterBy } = this.state;
-        
+
         if (
             filterBy === 'All' || 
             catId === filterBy ||
@@ -120,7 +120,7 @@ class MenuPanel extends React.Component {
                         //render all sub NOT registered in MENU_STRUCT
                         Object.keys(formattedMenu).length > 0 &&
                         Object.keys(formattedMenu[catId]).map(subId => {
-                            if (!subExists(subId))
+                            if (!subExists(catId, subId))
                                 return this.renderSubcategory(catId, subId);
                         })
                     }

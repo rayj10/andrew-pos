@@ -75,7 +75,7 @@ export default function MenuMgmtModal({
         let path = `menu/${input[MENU_FIELD_ID.id]}`;
         let menuObj = {
             [MENU_FIELD_ID.name]: input[MENU_FIELD_ID.name],
-            [MENU_FIELD_ID.price]: input[MENU_FIELD_ID.price],
+            [MENU_FIELD_ID.price]: Number(input[MENU_FIELD_ID.price]),
             [MENU_FIELD_ID.category]: !isEmpty(input[MENU_FIELD_ID.customCategory]) ? 
                 input[MENU_FIELD_ID.customCategory] : input[MENU_FIELD_ID.category],
             [MENU_FIELD_ID.sub]: !isEmpty(input[MENU_FIELD_ID.customSub]) ? 
@@ -105,7 +105,7 @@ export default function MenuMgmtModal({
         let path = `menu/${defaultValues[MENU_FIELD_ID.id]}`;
         let menuObj = {
             [MENU_FIELD_ID.name]: input[MENU_FIELD_ID.name] ?? defaultValues[MENU_FIELD_ID.name],
-            [MENU_FIELD_ID.price]: input[MENU_FIELD_ID.price] ?? defaultValues[MENU_FIELD_ID.price],
+            [MENU_FIELD_ID.price]: Number(input[MENU_FIELD_ID.price] ?? defaultValues[MENU_FIELD_ID.price]),
             [MENU_FIELD_ID.category]: !isEmpty(input[MENU_FIELD_ID.customCategory]) ? 
                 input[MENU_FIELD_ID.customCategory] : 
                 input[MENU_FIELD_ID.category] ?? defaultValues[MENU_FIELD_ID.category],
