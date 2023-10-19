@@ -134,6 +134,7 @@ class MenuMgmt extends React.Component {
                         Object.keys(formattedMenu[catId]).map(subId => {
                             if (!subExists(catId, subId))
                                 return this.renderSubcategory(catId, subId);
+                            return null;
                         })
                     }
                 </Category>
@@ -165,7 +166,8 @@ class MenuMgmt extends React.Component {
                  Object.keys(formattedMenu).length > 0 &&
                  Object.keys(formattedMenu).map(catId => {
                     if (!categoryExists(catId))
-                        return this.renderCategory(catId)
+                        return this.renderCategory(catId);
+                    return null;
                  })
             }
         </Panel>
