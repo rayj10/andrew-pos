@@ -4,11 +4,12 @@ import { connect } from 'react-redux'
 
 import OrderEntry from '../components/OrderEntry';
 import ActionButtons from '../components//ActionButtons';
+import { isPortrait } from '../functions/util';
 
 const Container = styled.div`
     display: flex;
-    flex-direction: ${window.innerWidth >= 750 ? 'column' : 'row'};
-    width: ${window.innerWidth >= 750 ? '30%' : '80%'};
+    flex-direction: ${props => props.portraitMode ? 'row' : 'column'};
+    width: ${props => props.portraitMode ? '80%' : '30%'};
 `;
 
 const OrderContainer = styled.div`
@@ -17,7 +18,7 @@ const OrderContainer = styled.div`
     margin: 10px;
     border: 1px dashed #808080;
     height: 580px;
-    width: ${window.innerWidth < 750 ? '100%' : null};
+    width: ${props => props.portraitMode ? '100%' : null};
 `;
 
 const Title = styled.h4`
@@ -68,8 +69,8 @@ class Orders extends React.Component{
     }
 
     render(){
-        return <Container className='order-manager'>
-            <OrderContainer>
+        return <Container className='order-manager' portraitMode={isPortrait()}>
+            <OrderContainer portraitMode={isPortrait()}>
                 <Title>Items</Title>
                 <Divider/>
                 <Details>

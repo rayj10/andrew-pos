@@ -2,15 +2,16 @@ import { styled } from 'styled-components';
 
 import MenuPanel from './MenuPanel';
 import Orders from './Orders';
+import { isPortrait } from '../functions/util';
 
 const Container = styled.div`
   display: flex;
-  flex-direction: ${window.innerWidth >= 750 ? 'row' : 'column'};
+  flex-direction: ${props => props.portraitMode ? 'column' : 'row'};
 `;
 
 function Main() {
   return (
-    <Container>
+    <Container portraitMode={isPortrait()}>
       <Orders/>
       <MenuPanel/>
     </Container>

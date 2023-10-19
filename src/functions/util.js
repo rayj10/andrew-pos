@@ -15,3 +15,7 @@ export function objectsEqual(o1, o2){
 export function isEmpty(val){
     return !val || val === '';
 }
+
+export function isPortrait(){
+    return window.innerWidth < 700;
+}

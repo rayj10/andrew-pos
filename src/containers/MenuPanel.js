@@ -8,14 +8,14 @@ import Filter from '../components/Filter';
 import { addOrder } from '../slice/OrderSlice';
 import { updateMenuList } from '../slice/MenuSlice';
 import { categoryExists, getExtraFilters, getMenuFromFB, subExists } from '../functions/menu';
-import { objectsEqual } from '../functions/util';
+import { isPortrait, objectsEqual } from '../functions/util';
 
 const Panel = styled.div`
     display: flex;
     flex-direction: column;
     margin: 10px;
     border: 1px solid #808080;
-    width: ${window.innerWidth >= 750 ? '70%' : '90%'};
+    width: ${props => props.portraitMode ? '90%' : '70%'};
     height: 90%;
     align-items: start;
     padding: 5px;
@@ -133,7 +133,7 @@ class MenuPanel extends React.Component {
     render() {
         let { formattedMenu, filterBy } = this.state;
 
-        return <Panel className='menu-panel'>
+        return <Panel className='menu-panel' portraitMode={isPortrait()}>
             <Filter 
                 filterBy={filterBy} 
                 onFilter={this.handleFilter.bind(this)} 

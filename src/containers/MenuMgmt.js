@@ -6,7 +6,7 @@ import { CATEGORY, CATEGORY_WITH_EXTRAS, MENU_STRUCT } from '../constants/menu';
 import MenuButton from '../components/MenuButton';
 import Filter from '../components/Filter';
 import { categoryExists, getExtraFilters, getMenuFromFB, subExists } from '../functions/menu';
-import { objectsEqual } from '../functions/util';
+import { isPortrait, objectsEqual } from '../functions/util';
 import MenuMgmtModal from '../components/MenuMgmtModal';
 
 const Panel = styled.div`
@@ -15,7 +15,7 @@ const Panel = styled.div`
     margin: 10px;
     border: 1px solid #808080;
     width: 70%;
-    margin-inline: ${window.innerWidth >= 750 ? '20px' : '10px'};
+    margin-inline: ${props => props.portraitMode ? '10px' : '20px'};
     height: 90%;
     align-items: start;
     padding: 5px;
@@ -145,7 +145,7 @@ class MenuMgmt extends React.Component {
     render() {
         let { formattedMenu, filterBy } = this.state;
 
-        return <Panel className='menu-panel'>
+        return <Panel className='menu-panel' portraitMode={isPortrait()}>
             <MenuMgmtModal 
                 open={this.state.menuModalOpen} 
                 onClose={this.handleModalClose.bind(this)}

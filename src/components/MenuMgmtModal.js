@@ -10,7 +10,7 @@ import { styled } from 'styled-components';
 import { MENU_FIELDS, MENU_FIELD_ID, SUBCATEGORY } from '../constants/menu';
 import { modifyMenu, deleteMenu } from '../functions/firebase';
 import { categoryExists } from '../functions/menu';
-import { isEmpty } from '../functions/util';
+import { isEmpty, isPortrait } from '../functions/util';
 
 const Container = styled.div`
     display: flex;
@@ -25,7 +25,7 @@ const ModalInner = styled.div`
     flex-direction: column;
     align-items: center;
     height: 90%;
-    width: ${window.innerWidth > 750 ? '70%' : '95%'};
+    width: ${props => props.portraitMode ? '95%' : '60%'};
     border-radius: 8px;
     background-color: white;
     align-self: center;
@@ -38,7 +38,7 @@ const Title = styled.h2`
 
 const ButtonContainer = styled.div`
     display: flex;
-    flex-direction: ${window.innerWidth > 750 ? 'row' : 'column'};
+    flex-direction: ${props => props.portraitMode ? 'column' : 'row'};
 `;
 
 export default function MenuMgmtModal({
@@ -169,7 +169,7 @@ export default function MenuMgmtModal({
         style={{ backdropFilter: "blur(1px)", backgroundColor: 'rgba(255,255,255,0.5)'}}        
     >
         <Container>
-            <ModalInner ref={ModalInnerRef}>
+            <ModalInner portraitMode={isPortrait()} ref={ModalInnerRef}>
                 <Title>
                     {`${defaultValues ? 'Edit' : 'Add'} Menu Item`}
                 </Title>
@@ -186,7 +186,7 @@ export default function MenuMgmtModal({
                             disabled={defaultValues && field.id === MENU_FIELD_ID.id}
                             defaultValue={defaultValues ? getDefaultValue(field.id) : ''}
                             select={field.select ? true : false}
-                            style={{marginBlock: 10, width: window.innerWidth > 750 ? '40%' : '90%'}}
+                            style={{marginBlock: 10, width: isPortrait() ? '90%' : '40%'}}
                             helperText={field.helper}
                             onChange={(e) => handleInput(field.id, e.target.value)}
                             label={field.label}
@@ -206,7 +206,7 @@ export default function MenuMgmtModal({
                     loading ?
                         <CircularProgress style={{color: '#050A30'}}/>
                         :
-                        <ButtonContainer>
+                        <ButtonContainer portraitMode={isPortrait()}>
                             <Button 
                                 variant="contained" 
                                 onClick={onClose}
@@ -218,18 +218,6 @@ export default function MenuMgmtModal({
                                 }}
                             >
                                 Cancel
-                            </Button>
-                            <Button 
-                                variant="contained" 
-                                onClick={defaultValues ? handleEdit : handleAdd}
-                                style={{
-                                    backgroundColor: '#050A30',
-                                    margin: 15,
-                                    width: 200,
-                                    height: 50
-                                }}
-                            >
-                                {defaultValues ? 'Save' : 'Add'}
                             </Button>
                             {
                                 defaultValues &&
@@ -246,6 +234,18 @@ export default function MenuMgmtModal({
                                     Delete
                                 </Button>
                             }
+                            <Button 
+                                variant="contained" 
+                                onClick={defaultValues ? handleEdit : handleAdd}
+                                style={{
+                                    backgroundColor: '#050A30',
+                                    margin: 15,
+                                    width: 200,
+                                    height: 50
+                                }}
+                            >
+                                {defaultValues ? 'Save' : 'Add'}
+                            </Button>
                     </ButtonContainer>   
                 }        
             </ModalInner>

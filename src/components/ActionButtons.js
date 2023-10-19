@@ -9,6 +9,7 @@ import { styled } from 'styled-components';
 import { Navigate } from "react-router-dom"
 
 import { removeLastEntry, resetOrder, deleteEntry } from '../slice/OrderSlice';
+import { isPortrait } from '../functions/util';
 
 const mapDispatchToProps = { 
     removeLastEntry, resetOrder, deleteEntry
@@ -16,7 +17,7 @@ const mapDispatchToProps = {
 
 const Container = styled.div`
     display: flex;
-    flex-direction: ${window.innerWidth >= 750 ? 'row' : 'column'};
+    flex-direction: ${props => props.portraitMode ? 'column' : 'row'};
     margin: 5px;
 `;
 
@@ -29,7 +30,7 @@ class ActionButtons extends React.Component{
     }
 
     render(){
-        return <Container>
+        return <Container portraitMode={isPortrait()}>
             { 
                 this.state.redirect && 
                 <Navigate to='/andrew-pos/admin' replace={true}/>
