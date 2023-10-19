@@ -3,7 +3,7 @@ import { styled } from 'styled-components';
 import { connect } from 'react-redux'
 
 import OrderEntry from '../components/OrderEntry';
-import ActionButtons from './ActionButtons';
+import ActionButtons from '../components//ActionButtons';
 
 const Container = styled.div`
     display: flex;

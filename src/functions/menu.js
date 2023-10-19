@@ -1,3 +1,7 @@
+import { getMenu } from '../functions/firebase';
+import { updateMenuList } from '../slice/MenuSlice';
+
+
 export function formatMenu(menu = []){
     let formattedMenu = {};
 
@@ -14,4 +18,17 @@ export function formatMenu(menu = []){
     });
 
     return formattedMenu;
+}
+
+export function getMenuFromFB(){
+    return dispatch => {
+        return getMenu()
+            .then(menu => {
+                let formattedMenu = formatMenu(menu);
+                dispatch(updateMenuList(formattedMenu));
+            })
+            .catch(e =>
+                alert(JSON.stringify(e))
+            );
+    }
 }

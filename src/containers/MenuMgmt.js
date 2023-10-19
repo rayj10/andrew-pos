@@ -4,11 +4,10 @@ import { connect } from 'react-redux'
 
 import { CATEGORY, CATEGORY_WITH_EXTRAS, MENU_STRUCT } from '../constants/menu';
 import MenuButton from '../components/MenuButton';
-import Filter from './Filter';
-import { addOrder } from '../slice/OrderSlice';
-import { updateMenuList } from '../slice/MenuSlice';
-import { getMenu } from '../functions/firebase';
-import { formatMenu } from '../functions/menu';
+import Filter from '../components/Filter';
+import { getMenuFromFB } from '../functions/menu';
+import { objectsEqual } from '../functions/util';
+import MenuMgmtModal from '../components/MenuMgmtModal';
 
 const Panel = styled.div`
     display: flex;
@@ -40,8 +39,7 @@ const Title = styled.h4`
 `;
 
 const mapDispatchToProps = { 
-    addOrder,
-    updateMenuList
+    getMenuFromFB,
 };
 
 const mapStateToProps = state => ({
@@ -53,25 +51,27 @@ class MenuMgmt extends React.Component {
         super(props);
         this.state = {
             filterBy: "all",
-            formattedMenu: {}
+            formattedMenu: {},
+            menuModalOpen: false,
+            editMenu: null
         };
     }
 
     componentDidMount(){
         let menuLength = Object.keys(this.props.menuList).length;
         if (menuLength === 0){
-            getMenu()
-                .then(menu => {
-                    let formattedMenu = formatMenu(menu);
-                    this.setState({formattedMenu});
-                    this.props.updateMenuList(formattedMenu);
-                })
-                .catch(e =>
-                    alert(JSON.stringify(e))
-                );
+            this.props.getMenuFromFB()
         }
         if (menuLength > 0)
             this.setState({formattedMenu: this.props.menuList});
+    }
+
+    componentDidUpdate(prevProps){
+        if (this.props.menuList && !objectsEqual(prevProps.menuList, this.props.menuList)){
+            let menuLength = Object.keys(this.props.menuList).length;
+
+            menuLength > 0 && this.setState({formattedMenu: this.props.menuList});
+        }
     }
 
     handleFilter = (filterBy) => {
@@ -79,13 +79,26 @@ class MenuMgmt extends React.Component {
     }
 
     handleMenuEdit = (menu) => {
-       alert(JSON.stringify(menu))
+       this.setState({
+            menuModalOpen: true,
+            editMenu: menu
+       });
+    }
+
+    handleModalClose = () => {
+        this.props.getMenuFromFB();
+        this.setState({menuModalOpen: false});
     }
 
     render() {
         let { formattedMenu, filterBy } = this.state;
 
         return <Panel className='menu-panel'>
+            <MenuMgmtModal 
+                open={this.state.menuModalOpen} 
+                onClose={this.handleModalClose.bind(this)}
+                defaultValues={this.state.editMenu}
+            />
             <Filter filterBy={filterBy} onFilter={this.handleFilter.bind(this)}/>
             {
                 Object.keys(CATEGORY).map(id => {

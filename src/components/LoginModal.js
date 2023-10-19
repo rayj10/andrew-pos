@@ -56,7 +56,9 @@ export default function LoginModal({
                     <>
                         {
                             error &&
-                            <Alert onClose={() => setError('')} severity="error" style={{marginBottom: 20}}>{error}</Alert>
+                            <Alert onClose={() => setError('')} severity="error" style={{marginBottom: 20}}>
+                                {error}
+                            </Alert>
                         }
                         <TextField
                             id="outlined-adornment-password"

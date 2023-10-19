@@ -6,7 +6,8 @@ import {
     query, 
     orderBy, 
     getDocs, 
-    setDoc 
+    setDoc,
+    deleteDoc
 } from 'firebase/firestore/lite';
 import { getAuth, signInWithEmailAndPassword, signOut } from 'firebase/auth';
 
@@ -49,8 +50,18 @@ export async function getMenu() {
 export async function modifyMenu(menuObj, docPath){
     const docRef = doc(db, docPath)
     try {
-        await setDoc(docRef, menuObj, {merge: true});
+        return await setDoc(docRef, menuObj, {merge: true});
       } catch (e) {
-        console.error("Error adding document: ", e);
+        console.error("Error modifying menu: ", e);
+      }
+}
+
+//docPath is collectionName/docID
+export async function deleteMenu(docPath){
+    const docRef = doc(db, docPath)
+    try {
+        return await deleteDoc(docRef);
+      } catch (e) {
+        console.error("Error deleting menu: ", e);
       }
 }

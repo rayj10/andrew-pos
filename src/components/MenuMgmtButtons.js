@@ -8,9 +8,12 @@ import { Navigate } from "react-router-dom"
 
 import { updateMenuList } from '../slice/MenuSlice';
 import { logout } from '../functions/firebase';
+import MenuMgmtModal from './MenuMgmtModal';
+import { getMenuFromFB } from '../functions/menu';
 
 const mapDispatchToProps = { 
-    updateMenuList
+    updateMenuList,
+    getMenuFromFB
 };
 
 const Container = styled.div`
@@ -24,7 +27,8 @@ class MenuMgmtButtons extends React.Component{
     constructor(props) {
         super(props);
         this.state = {
-            redirect: false
+            redirect: false,
+            menuModalOpen: false
         };
     }
 
@@ -33,12 +37,21 @@ class MenuMgmtButtons extends React.Component{
         this.setState({redirect: true})
     }
 
+    handleModalClose = () => {
+        this.props.getMenuFromFB();
+        this.setState({menuModalOpen: false});
+    }
+
     render(){
         return <Container>
             { 
                 this.state.redirect && 
                 <Navigate to='/andrew-pos' replace={true}/>
             }
+            <MenuMgmtModal 
+                open={this.state.menuModalOpen} 
+                onClose={this.handleModalClose.bind(this)}
+            />
             <Button 
                 variant="contained" 
                 onClick={this.handleBack.bind(this)}
@@ -52,7 +65,7 @@ class MenuMgmtButtons extends React.Component{
             </Button>
             <Button 
                 variant="contained" 
-                onClick={this.props.addMenu}
+                onClick={() => this.setState({menuModalOpen: true})}
                 style={{
                     backgroundColor: '#32CD32',
                     margin: 5,

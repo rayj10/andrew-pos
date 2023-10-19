@@ -4,11 +4,11 @@ import { connect } from 'react-redux'
 
 import { CATEGORY, CATEGORY_WITH_EXTRAS, MENU_STRUCT } from '../constants/menu';
 import MenuButton from '../components/MenuButton';
-import Filter from './Filter';
+import Filter from '../components/Filter';
 import { addOrder } from '../slice/OrderSlice';
 import { updateMenuList } from '../slice/MenuSlice';
-import { getMenu } from '../functions/firebase';
-import { formatMenu } from '../functions/menu';
+import { getMenuFromFB } from '../functions/menu';
+import { objectsEqual } from '../functions/util';
 
 const Panel = styled.div`
     display: flex;
@@ -40,6 +40,7 @@ const Title = styled.h4`
 
 const mapDispatchToProps = { 
     addOrder,
+    getMenuFromFB,
     updateMenuList
 };
 
@@ -59,18 +60,18 @@ class MenuPanel extends React.Component {
     componentDidMount(){
         let menuLength = Object.keys(this.props.menuList).length;
         if (menuLength === 0){
-            getMenu()
-                .then(menu => {
-                    let formattedMenu = formatMenu(menu);
-                    this.setState({formattedMenu});
-                    this.props.updateMenuList(formattedMenu);
-                })
-                .catch(e =>
-                    alert(JSON.stringify(e))
-                );
+            this.props.getMenuFromFB();
         }
         if (menuLength > 0)
             this.setState({formattedMenu: this.props.menuList});
+    }
+
+    componentDidUpdate(prevProps){
+        if (this.props.menuList && !objectsEqual(prevProps.menuList, this.props.menuList)){
+            let menuLength = Object.keys(this.props.menuList).length;
+
+            menuLength > 0 && this.setState({formattedMenu: this.props.menuList});
+        }
     }
 
     handleFilter = (filterBy) => {

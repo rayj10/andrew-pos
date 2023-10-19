@@ -2,7 +2,7 @@ import * as React from 'react';
 import { styled } from 'styled-components';
 
 import MenuMgmt from './MenuMgmt';
-import MenuMgmtButtons from './MenuMgmtButtons';
+import MenuMgmtButtons from '../components/MenuMgmtButtons';
 import LoginModal from '../components/LoginModal';
 import { isLoggedIn } from '../functions/firebase';
 
@@ -17,7 +17,10 @@ function Admin() {
 
     return (
         <Container>
-            <LoginModal open={needLogin} onSuccess={() => setNeedLogin(false)}/>
+            <LoginModal 
+                open={needLogin} 
+                onSuccess={() => setNeedLogin(false)}
+            />
             <MenuMgmtButtons/>
             <MenuMgmt/>
         </Container>

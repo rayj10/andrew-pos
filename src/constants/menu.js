@@ -70,4 +70,40 @@ export const CATEGORY_WITH_EXTRAS = [
     CATEGORY.special,
     CATEGORY.standard,
     CATEGORY.souvlaki
+];
+
+export const MENU_FIELD_ID = {
+    id: 'id',
+    name: 'name',
+    price: 'price',
+    category: 'category',
+    sub: 'sub'
+}
+
+export const MENU_FIELDS = [
+    {
+        id: MENU_FIELD_ID.id,
+        label: 'Item ID',
+        helper: "Can't contain forward slash (/)"
+    },
+    {
+        id: MENU_FIELD_ID.name,
+        label: 'Item Name'
+    },
+    {
+        id: MENU_FIELD_ID.price,
+        label: 'Price'
+    },
+    {
+        id: MENU_FIELD_ID.category,
+        label: 'Category',
+        select: CATEGORY,
+        helper: 'Select where to group this item'
+    },
+    {
+        id: MENU_FIELD_ID.sub,
+        label: 'Subcategory',
+        select: SUBCATEGORY,
+        helper: 'Select where in the category this item will be displayed in'
+    }
 ]
