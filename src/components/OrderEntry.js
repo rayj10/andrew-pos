@@ -10,14 +10,20 @@ const Container = styled.div`
     background-color: ${props => props.selected ? '#3AAFDC' : null};
 `;
 
+const Data = styled.label`
+    width: 33%;
+`;
+
 export default function OrderEntry({
     name,
     price,
+    qty,
     selected,
     onClick
 }){
     return <Container selected={selected} onClick={onClick}>
-        <label>{name}</label>
-        <label>{`$${price}`}</label>
+        <Data>{name}</Data>
+        <Data style={{textAlign: 'center'}}>{qty}</Data>
+        <Data style={{textAlign: 'end'}}>{`$${price}`}</Data>
     </Container>
 }

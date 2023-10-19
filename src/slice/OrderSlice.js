@@ -13,7 +13,8 @@ export const OrderSlice = createSlice({
       state.orderLine = state.orderLine.slice(0, -1);
     },
     deleteEntry: (state, action) => {
-      state.orderLine.splice(action.payload, 1);
+      let deleteIdx = state.orderLine.findIndex(order => order.name === action.payload);
+      state.orderLine.splice(deleteIdx, 1);
     },
     resetOrder: (state) => {
       state.orderLine = [];

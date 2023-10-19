@@ -68,6 +68,26 @@ class Orders extends React.Component{
         return total;
     }
 
+    consolidateOrder = () => {
+        let consolidatedOrders = [];
+        let orderIdx = -1;
+
+        this.props.orderLine.forEach(item => { 
+            orderIdx = consolidatedOrders.findIndex(entry => entry.name === item.name);
+            if (orderIdx >= 0){
+                consolidatedOrders[orderIdx].qty += 1;
+                consolidatedOrders[orderIdx].price += item.price;
+            }
+            else
+                consolidatedOrders.push({
+                    ...item,
+                    qty: 1
+                })
+        });
+
+        return consolidatedOrders;
+    }
+
     render(){
         return <Container className='order-manager' portraitMode={isPortrait()}>
             <OrderContainer portraitMode={isPortrait()}>
@@ -75,12 +95,12 @@ class Orders extends React.Component{
                 <Divider/>
                 <Details>
                     {
-                        this.props.orderLine.map((item, idx) => {
+                        this.consolidateOrder().map((item, idx) => {
                             return <OrderEntry 
                                 key={idx} 
                                 {...item}
-                                onClick={()=>this.setState({selectedOrder: idx})}
-                                selected={this.state.selectedOrder === idx}
+                                onClick={() => this.setState({selectedOrder: item.name})}
+                                selected={this.state.selectedOrder === item.name}
                             />
                         })
                     }
