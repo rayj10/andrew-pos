@@ -25,7 +25,7 @@ const ModalInner = styled.div`
     flex-direction: column;
     align-items: center;
     height: 90%;
-    width: 70%;
+    width: ${window.innerWidth > 750 ? '70%' : '95%'};
     border-radius: 8px;
     background-color: white;
     align-self: center;
@@ -38,7 +38,7 @@ const Title = styled.h2`
 
 const ButtonContainer = styled.div`
     display: flex;
-    flex-direction: row;
+    flex-direction: ${window.innerWidth > 750 ? 'row' : 'column'};
 `;
 
 export default function MenuMgmtModal({
@@ -186,7 +186,7 @@ export default function MenuMgmtModal({
                             disabled={defaultValues && field.id === MENU_FIELD_ID.id}
                             defaultValue={defaultValues ? getDefaultValue(field.id) : ''}
                             select={field.select ? true : false}
-                            style={{marginBlock: 10, width: '40%'}}
+                            style={{marginBlock: 10, width: window.innerWidth > 750 ? '40%' : '90%'}}
                             helperText={field.helper}
                             onChange={(e) => handleInput(field.id, e.target.value)}
                             label={field.label}
@@ -207,21 +207,6 @@ export default function MenuMgmtModal({
                         <CircularProgress style={{color: '#050A30'}}/>
                         :
                         <ButtonContainer>
-                            {
-                                defaultValues &&
-                                <Button 
-                                    variant="contained" 
-                                    onClick={handleDelete}
-                                    style={{
-                                        backgroundColor: '#FF4C4C',
-                                        margin: 15,
-                                        width: 200,
-                                        height: 50
-                                    }}
-                                >
-                                    Delete
-                                </Button>
-                            }
                             <Button 
                                 variant="contained" 
                                 onClick={onClose}
@@ -246,6 +231,21 @@ export default function MenuMgmtModal({
                             >
                                 {defaultValues ? 'Save' : 'Add'}
                             </Button>
+                            {
+                                defaultValues &&
+                                <Button 
+                                    variant="contained" 
+                                    onClick={handleDelete}
+                                    style={{
+                                        backgroundColor: '#FF4C4C',
+                                        margin: 15,
+                                        width: 200,
+                                        height: 50
+                                    }}
+                                >
+                                    Delete
+                                </Button>
+                            }
                     </ButtonContainer>   
                 }        
             </ModalInner>
