@@ -28,32 +28,32 @@ export const SUBCATEGORY = {
 
 export const MENU_STRUCT = {
     [CATEGORY.special]: [
-        [SUBCATEGORY.lot],
-        [SUBCATEGORY.mex],
-        [SUBCATEGORY.haw],
-        [SUBCATEGORY.rusty],
-        [SUBCATEGORY.smokey],
-        [SUBCATEGORY.kids],
+        SUBCATEGORY.lot,
+        SUBCATEGORY.mex,
+        SUBCATEGORY.haw,
+        SUBCATEGORY.rusty,
+        SUBCATEGORY.smokey,
+        SUBCATEGORY.kids,
     ],
     [CATEGORY.standard]: [
-        [SUBCATEGORY.standard]
+        SUBCATEGORY.standard
     ],
     [CATEGORY.souvlaki]: [
-        [SUBCATEGORY.souvlaki]
+        SUBCATEGORY.souvlaki
     ],
     [CATEGORY.extras]: [
-        [SUBCATEGORY.topping],
-        [SUBCATEGORY.modifier],
-        [SUBCATEGORY.patty]
+        SUBCATEGORY.topping,
+        SUBCATEGORY.modifier,
+        SUBCATEGORY.patty
     ],
     [CATEGORY.sides]: [
-        [SUBCATEGORY.chips],
-        [SUBCATEGORY.snack]
+        SUBCATEGORY.chips,
+        SUBCATEGORY.snack
     ],
     [CATEGORY.drinks]: [
-        [SUBCATEGORY.basicDrink],
-        [SUBCATEGORY.water],
-        [SUBCATEGORY.otherDrink]
+        SUBCATEGORY.basicDrink,
+        SUBCATEGORY.water,
+        SUBCATEGORY.otherDrink
     ],
 }
 
@@ -77,7 +77,9 @@ export const MENU_FIELD_ID = {
     name: 'name',
     price: 'price',
     category: 'category',
-    sub: 'sub'
+    customCategory: 'customCategory',
+    sub: 'sub',
+    customSub: 'customSub',
 }
 
 export const MENU_FIELDS = [
@@ -101,9 +103,19 @@ export const MENU_FIELDS = [
         helper: 'Select where to group this item'
     },
     {
+        id: MENU_FIELD_ID.customCategory,
+        label: 'Custom Category',
+        helper: 'Required if no Category selected'
+    },
+    {
         id: MENU_FIELD_ID.sub,
         label: 'Subcategory',
         select: SUBCATEGORY,
         helper: 'Select where in the category this item will be displayed in'
-    }
+    },
+    {
+        id: MENU_FIELD_ID.customSub,
+        label: 'Custom Sub',
+        helper: 'Required if no Subcategory selected'
+    },
 ]

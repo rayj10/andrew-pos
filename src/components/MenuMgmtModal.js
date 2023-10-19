@@ -7,8 +7,10 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Alert from '@mui/material/Alert';
 import { styled } from 'styled-components';
 
-import { MENU_FIELDS, MENU_FIELD_ID } from '../constants/menu';
+import { MENU_FIELDS, MENU_FIELD_ID, SUBCATEGORY } from '../constants/menu';
 import { modifyMenu, deleteMenu } from '../functions/firebase';
+import { categoryExists } from '../functions/menu';
+import { isEmpty } from '../functions/util';
 
 const Container = styled.div`
     display: flex;
@@ -22,7 +24,7 @@ const ModalInner = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
-    height: 80%;
+    height: 90%;
     width: 70%;
     border-radius: 8px;
     background-color: white;
@@ -47,17 +49,46 @@ export default function MenuMgmtModal({
     const [input, setInput] = React.useState({});
     const [error, setError] = React.useState('');
     const [loading, setLoading] = React.useState(false);
+    const ModalInnerRef = React.useRef(null);
+
+    const validMenu = (menuObj) => {
+        return Object.keys(menuObj).every(fieldId => {
+            if (isEmpty(menuObj[fieldId]))
+                return false;
+            return true;
+        })
+    };
 
     const handleAdd = () => {
         setLoading(true);
+        if (
+            !input[MENU_FIELD_ID.id] || 
+            input[MENU_FIELD_ID.id] === '' ||
+            input[MENU_FIELD_ID.id].includes('/')
+        ){
+            setError('Invalid Menu ID');
+            setLoading(false);
+            ModalInnerRef.current.scrollTo({ top: 0, behavior: 'smooth' })
+            return;
+        }
+
         let path = `menu/${input[MENU_FIELD_ID.id]}`;
         let menuObj = {
             [MENU_FIELD_ID.name]: input[MENU_FIELD_ID.name],
             [MENU_FIELD_ID.price]: input[MENU_FIELD_ID.price],
-            [MENU_FIELD_ID.category]: input[MENU_FIELD_ID.category],
-            [MENU_FIELD_ID.sub]: input[MENU_FIELD_ID.sub]
+            [MENU_FIELD_ID.category]: !isEmpty(input[MENU_FIELD_ID.customCategory]) ? 
+                input[MENU_FIELD_ID.customCategory] : input[MENU_FIELD_ID.category],
+            [MENU_FIELD_ID.sub]: !isEmpty(input[MENU_FIELD_ID.customSub]) ? 
+                input[MENU_FIELD_ID.customSub] : input[MENU_FIELD_ID.sub]
         };
 
+        if (!validMenu(menuObj)){
+            setError('Some values are still empty');
+            setLoading(false);
+            ModalInnerRef.current.scrollTo({ top: 0, behavior: 'smooth' })
+            return;
+        }
+        
         modifyMenu(menuObj, path)
             .then(() => {
                 setLoading(false);
@@ -67,7 +98,7 @@ export default function MenuMgmtModal({
                 setError(JSON.stringify(e))
                 setLoading(false);
             });
-    }
+    };
 
     const handleEdit = () => {
         setLoading(true);
@@ -75,9 +106,20 @@ export default function MenuMgmtModal({
         let menuObj = {
             [MENU_FIELD_ID.name]: input[MENU_FIELD_ID.name] ?? defaultValues[MENU_FIELD_ID.name],
             [MENU_FIELD_ID.price]: input[MENU_FIELD_ID.price] ?? defaultValues[MENU_FIELD_ID.price],
-            [MENU_FIELD_ID.category]: input[MENU_FIELD_ID.category] ?? defaultValues[MENU_FIELD_ID.category],
-            [MENU_FIELD_ID.sub]: input[MENU_FIELD_ID.sub] ?? defaultValues[MENU_FIELD_ID.sub]
+            [MENU_FIELD_ID.category]: !isEmpty(input[MENU_FIELD_ID.customCategory]) ? 
+                input[MENU_FIELD_ID.customCategory] : 
+                input[MENU_FIELD_ID.category] ?? defaultValues[MENU_FIELD_ID.category],
+            [MENU_FIELD_ID.sub]: !isEmpty(input[MENU_FIELD_ID.customSub]) ? 
+                input[MENU_FIELD_ID.customSub] : 
+                input[MENU_FIELD_ID.sub] ?? defaultValues[MENU_FIELD_ID.sub]
         };
+
+        if (!validMenu(menuObj)){
+            setError('Some values are still empty');
+            setLoading(false);
+            ModalInnerRef.current.scrollTo({ top: 0, behavior: 'smooth' })
+            return;
+        }
 
         modifyMenu(menuObj, path)
             .then(() => {
@@ -88,7 +130,7 @@ export default function MenuMgmtModal({
                 setError(JSON.stringify(e))
                 setLoading(false);
             });
-    }
+    };
 
     const handleDelete = () => {
         setLoading(true);
@@ -102,12 +144,24 @@ export default function MenuMgmtModal({
                 setError(JSON.stringify(e))
                 setLoading(false);
             });
-    }
+    };
 
     const handleInput = (key, val) => {
         let currentInput = input;
         currentInput[key] = val
         setInput(currentInput);
+    };
+
+    const getDefaultValue = (id) => {
+        if (id === MENU_FIELD_ID.customCategory)
+            return !categoryExists(defaultValues[MENU_FIELD_ID.category]) ? 
+                defaultValues[MENU_FIELD_ID.category] : '';
+        
+        if (id === MENU_FIELD_ID.customSub)
+            return !Object.values(SUBCATEGORY).includes(defaultValues[MENU_FIELD_ID.sub]) ? 
+                defaultValues[MENU_FIELD_ID.sub] : '';
+        
+        return defaultValues[id];
     }
 
     return <Modal
@@ -115,7 +169,7 @@ export default function MenuMgmtModal({
         style={{ backdropFilter: "blur(1px)", backgroundColor: 'rgba(255,255,255,0.5)'}}        
     >
         <Container>
-            <ModalInner>
+            <ModalInner ref={ModalInnerRef}>
                 <Title>
                     {`${defaultValues ? 'Edit' : 'Add'} Menu Item`}
                 </Title>
@@ -130,7 +184,7 @@ export default function MenuMgmtModal({
                         return <TextField
                             key={field.id}
                             disabled={defaultValues && field.id === MENU_FIELD_ID.id}
-                            defaultValue={defaultValues ? defaultValues[field.id] : ''}
+                            defaultValue={defaultValues ? getDefaultValue(field.id) : ''}
                             select={field.select ? true : false}
                             style={{marginBlock: 10, width: '40%'}}
                             helperText={field.helper}

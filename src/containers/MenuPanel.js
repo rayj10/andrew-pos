@@ -7,7 +7,7 @@ import MenuButton from '../components/MenuButton';
 import Filter from '../components/Filter';
 import { addOrder } from '../slice/OrderSlice';
 import { updateMenuList } from '../slice/MenuSlice';
-import { getMenuFromFB } from '../functions/menu';
+import { categoryExists, getExtraFilters, getMenuFromFB, subExists } from '../functions/menu';
 import { objectsEqual } from '../functions/util';
 
 const Panel = styled.div`
@@ -52,7 +52,7 @@ class MenuPanel extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            filterBy: "all",
+            filterBy: "All",
             formattedMenu: {}
         };
     }
@@ -82,41 +82,73 @@ class MenuPanel extends React.Component {
         this.props.addOrder({name, price});
     }
 
+    renderSubcategory(catId, subId){
+        let { formattedMenu } = this.state;
+
+        return <SubCategory key={subId}>
+            {
+                Object.keys(formattedMenu).length > 0 &&
+                formattedMenu[catId][subId].map(menu => {
+                    return <MenuButton
+                        key={menu.id}
+                        menu={menu}
+                        onClick={this.handleMenuAdd.bind(this)}
+                    />
+                })
+            }
+        </SubCategory>
+    }
+
+    renderCategory(catId){
+        let { formattedMenu, filterBy } = this.state;
+        
+        if (
+            filterBy === 'All' || 
+            catId === filterBy ||
+            (catId === CATEGORY.extras && CATEGORY_WITH_EXTRAS.includes(filterBy))
+        )
+            return <div key={catId}>
+                <Title>{catId}</Title>
+                <Category>
+                    {
+                        //render all sub registered in MENU_STRUCT
+                        MENU_STRUCT[catId].map(subId => {
+                            return this.renderSubcategory(catId, subId);
+                        })
+                    }
+                    {
+                        //render all sub NOT registered in MENU_STRUCT
+                        Object.keys(formattedMenu).length > 0 &&
+                        Object.keys(formattedMenu[catId]).map(subId => {
+                            if (!subExists(subId))
+                                return this.renderSubcategory(catId, subId);
+                        })
+                    }
+                </Category>
+            </div>
+        return null;
+    }
+
     render() {
         let { formattedMenu, filterBy } = this.state;
 
         return <Panel className='menu-panel'>
-            <Filter filterBy={filterBy} onFilter={this.handleFilter.bind(this)}/>
+            <Filter 
+                filterBy={filterBy} 
+                onFilter={this.handleFilter.bind(this)} 
+                extraFilter={getExtraFilters(Object.keys(formattedMenu))}
+            />
             {
-                Object.keys(CATEGORY).map(id => {
-                    if (
-                        filterBy === 'all' || 
-                        id === filterBy ||
-                        (CATEGORY[id] === CATEGORY.extras && CATEGORY_WITH_EXTRAS.includes(CATEGORY[filterBy]))
-                    )
-                        return <div key={id}>
-                            <Title>{CATEGORY[id]}</Title>
-                            <Category>
-                                {
-                                    MENU_STRUCT[CATEGORY[id]].map(subId => {
-                                        return <SubCategory key={subId}>
-                                            {
-                                                Object.keys(formattedMenu).length > 0 &&
-                                                formattedMenu[CATEGORY[id]][subId].map(menu => {
-                                                    return <MenuButton
-                                                        key={menu.id}
-                                                        menu={menu}
-                                                        onClick={this.handleMenuAdd.bind(this)}
-                                                    />
-                                                })
-                                            }
-                                        </SubCategory>
-                                    })
-                                }
-                            </Category>
-                        </div>
-                    return null;
+                Object.values(CATEGORY).map(catId => {
+                    return this.renderCategory(catId)
                 })
+            }
+            {
+                 Object.keys(formattedMenu).length > 0 &&
+                 Object.keys(formattedMenu).map(catId => {
+                    if (!categoryExists(catId))
+                        return this.renderCategory(catId)
+                 })
             }
         </Panel>
     }

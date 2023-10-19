@@ -77,10 +77,14 @@ export default function LoginModal({
                                 '& .MuiInputLabel-root': {
                                     color: 'white'
                                 },
+                                '& .MuiInputLabel-root.Mui-focused': {
+                                    color: 'white'
+                                },
                                 '& .MuiInputBase-root': {
                                     color: 'white'
                                 }
                             }}
+                            onKeyDown={e => e.key === 'Enter' && handleLogin()}
                             InputProps={{
                                 endAdornment: (
                                     <InputAdornment position="end">

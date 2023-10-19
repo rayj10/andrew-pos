@@ -11,3 +11,7 @@ export function objectsEqual(o1, o2){
                 Object.keys(o1).every(key => objectsEqual(o1[key], o2[key]))
             : o1 === o2;
 }
+
+export function isEmpty(val){
+    return !val || val === '';
+}

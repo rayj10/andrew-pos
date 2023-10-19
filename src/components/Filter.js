@@ -12,22 +12,30 @@ const Container = styled.div`
 
 export default class Filter extends React.Component {
     render(){
-        let {filterBy, onFilter} = this.props;
+        let {filterBy, onFilter, extraFilter = []} = this.props;
 
         return <Container>
             <FilterButton 
-                id='all' 
                 name='All' 
-                selected={filterBy === 'all'}
-                onClick={() => onFilter && onFilter('all')}
+                selected={filterBy === 'All'}
+                onClick={() => onFilter && onFilter('All')}
             />
             {
                 Object.keys(CATEGORY).map(id => {
                     return <FilterButton 
                         key={id}
-                        id={id} 
                         name={CATEGORY[id]} 
-                        selected={filterBy === id}
+                        selected={filterBy === CATEGORY[id]}
+                        onClick={onFilter}
+                    />
+                })
+            }
+            {
+                extraFilter.map(filter => {
+                    return <FilterButton 
+                        key={filter}
+                        name={filter} 
+                        selected={filterBy === filter}
                         onClick={onFilter}
                     />
                 })

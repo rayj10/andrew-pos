@@ -5,7 +5,7 @@ import { connect } from 'react-redux'
 import { CATEGORY, CATEGORY_WITH_EXTRAS, MENU_STRUCT } from '../constants/menu';
 import MenuButton from '../components/MenuButton';
 import Filter from '../components/Filter';
-import { getMenuFromFB } from '../functions/menu';
+import { categoryExists, getExtraFilters, getMenuFromFB, subExists } from '../functions/menu';
 import { objectsEqual } from '../functions/util';
 import MenuMgmtModal from '../components/MenuMgmtModal';
 
@@ -33,7 +33,12 @@ const SubCategory = styled.div`
     flex-wrap: wrap;
 `;
 
-const Title = styled.h4`
+const CategoryHead = styled.h4`
+    margin-left: 5px;
+    margin-block: 10px;
+`;
+
+const Title = styled.h2`
     margin-left: 5px;
     margin-block: 10px;
 `;
@@ -50,7 +55,7 @@ class MenuMgmt extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            filterBy: "all",
+            filterBy: "All",
             formattedMenu: {},
             menuModalOpen: false,
             editMenu: null
@@ -90,6 +95,52 @@ class MenuMgmt extends React.Component {
         this.setState({menuModalOpen: false});
     }
 
+    renderSubcategory(catId, subId){
+        let { formattedMenu } = this.state;
+
+        return <SubCategory key={subId}>
+            {
+                Object.keys(formattedMenu).length > 0 &&
+                formattedMenu[catId][subId].map(menu => {
+                    return <MenuButton
+                        key={menu.id}
+                        menu={menu}
+                        onClick={this.handleMenuEdit.bind(this)}
+                    />
+                })
+            }
+        </SubCategory>
+    }
+    
+    renderCategory(catId){
+        let { formattedMenu, filterBy } = this.state;
+        if (
+            filterBy === 'All' || 
+            catId === filterBy ||
+            (catId === CATEGORY.extras && CATEGORY_WITH_EXTRAS.includes(filterBy))
+        )
+            return <div key={catId}>
+                <CategoryHead>{catId}</CategoryHead>
+                <Category>
+                    {
+                        //render all sub registered in MENU_STRUCT
+                        MENU_STRUCT[catId] && MENU_STRUCT[catId].map(subId => {
+                            return this.renderSubcategory(catId, subId);
+                        })
+                    }
+                    {
+                        //render all sub NOT registered in MENU_STRUCT
+                        Object.keys(formattedMenu).length > 0 &&
+                        Object.keys(formattedMenu[catId]).map(subId => {
+                            if (!subExists(catId, subId))
+                                return this.renderSubcategory(catId, subId);
+                        })
+                    }
+                </Category>
+            </div>
+        return null;
+    }
+
     render() {
         let { formattedMenu, filterBy } = this.state;
 
@@ -99,37 +150,23 @@ class MenuMgmt extends React.Component {
                 onClose={this.handleModalClose.bind(this)}
                 defaultValues={this.state.editMenu}
             />
-            <Filter filterBy={filterBy} onFilter={this.handleFilter.bind(this)}/>
+            <Title>Manage Menu</Title>
+            <Filter 
+                filterBy={filterBy} 
+                onFilter={this.handleFilter.bind(this)} 
+                extraFilter={getExtraFilters(Object.keys(formattedMenu))}
+            />            
             {
-                Object.keys(CATEGORY).map(id => {
-                    if (
-                        filterBy === 'all' || 
-                        id === filterBy ||
-                        (CATEGORY[id] === CATEGORY.extras && CATEGORY_WITH_EXTRAS.includes(CATEGORY[filterBy]))
-                    )
-                        return <div key={id}>
-                            <Title>{CATEGORY[id]}</Title>
-                            <Category>
-                                {
-                                    MENU_STRUCT[CATEGORY[id]].map(subId => {
-                                        return <SubCategory key={subId}>
-                                            {
-                                                Object.keys(formattedMenu).length > 0 &&
-                                                formattedMenu[CATEGORY[id]][subId].map(menu => {
-                                                    return <MenuButton
-                                                        key={menu.id}
-                                                        menu={menu}
-                                                        onClick={this.handleMenuEdit.bind(this)}
-                                                    />
-                                                })
-                                            }
-                                        </SubCategory>
-                                    })
-                                }
-                            </Category>
-                        </div>
-                    return null;
+                Object.values(CATEGORY).map(catId => {
+                    return this.renderCategory(catId)
                 })
+            }
+            {
+                 Object.keys(formattedMenu).length > 0 &&
+                 Object.keys(formattedMenu).map(catId => {
+                    if (!categoryExists(catId))
+                        return this.renderCategory(catId)
+                 })
             }
         </Panel>
     }
