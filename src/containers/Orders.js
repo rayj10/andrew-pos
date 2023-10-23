@@ -61,7 +61,12 @@ class Orders extends React.Component{
     constructor(props) {
         super(props);
         this.state = {
+            portraitMode: isPortrait()
         };
+    }
+
+    componentDidMount(){
+        window.addEventListener('resize', () => this.setState({portraitMode: isPortrait()}))
     }
 
     handleSelect = (item) => {
@@ -116,8 +121,8 @@ class Orders extends React.Component{
     }
 
     render(){
-        return <Container className='order-manager' portraitMode={isPortrait()}>
-            <OrderContainer portraitMode={isPortrait()}>
+        return <Container className='order-manager' portraitMode={this.state.portraitMode}>
+            <OrderContainer portraitMode={this.state.portraitMode}>
                 <Title>Items</Title>
                 <Divider/>
                 <Details>

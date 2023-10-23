@@ -17,5 +17,5 @@ export function isEmpty(val){
 }
 
 export function isPortrait(){
-    return window.innerWidth < 700;
+    return window.innerWidth < 900;
 }

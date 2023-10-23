@@ -22,6 +22,7 @@ const mapStateToProps = state => ({
 const Container = styled.div`
     display: flex;
     flex-direction: ${props => props.portraitMode ? 'column' : 'row'};
+    width: ${props => props.portraitMode ? '80%' : '30%'};
     margin: 5px;
 `;
 
@@ -29,12 +30,17 @@ class ActionButtons extends React.Component{
     constructor(props) {
         super(props);
         this.state = {
-            redirect: false
+            redirect: false,
+            portraitMode: isPortrait(),
         };
     }
 
+    componentDidMount(){
+        window.addEventListener('resize', () => this.setState({portraitMode: isPortrait()}))
+    }
+
     render(){
-        return <Container portraitMode={isPortrait()}>
+        return <Container portraitMode={this.state.portraitMode}>
             { 
                 this.state.redirect && 
                 <Navigate to='/andrew-pos/admin' replace={true}/>
@@ -45,7 +51,8 @@ class ActionButtons extends React.Component{
                 style={{
                     backgroundColor: '#009DC4',
                     margin: 5,
-                    height: 50
+                    height: 50,
+                    width: 50
                 }}
             >
                 <RefreshIcon/>
@@ -56,7 +63,8 @@ class ActionButtons extends React.Component{
                 style={{
                     backgroundColor: '#FEDC56',
                     margin: 5,
-                    height: 50
+                    height: 50,
+                    width: 50
                 }}
             >
                 <UndoIcon/>
@@ -67,7 +75,8 @@ class ActionButtons extends React.Component{
                 style={{
                     backgroundColor: '#FF4C4C',
                     margin: 5,
-                    height: 50
+                    height: 50,
+                    width: 50
                 }}
             >
                 <DeleteOutlineIcon/>
@@ -78,7 +87,8 @@ class ActionButtons extends React.Component{
                 style={{
                     backgroundColor: '#737373',
                     margin: 5,
-                    height: 50
+                    height: 50,
+                    width: 50
                 }}
             >
                 <SettingsIcon/>
