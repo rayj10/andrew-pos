@@ -5,8 +5,7 @@ import { connect } from 'react-redux'
 import { CATEGORY, CATEGORY_WITH_EXTRAS, MENU_STRUCT } from '../constants/menu';
 import MenuButton from '../components/MenuButton';
 import Filter from '../components/Filter';
-import { addOrder } from '../slice/OrderSlice';
-import { updateMenuList } from '../slice/MenuSlice';
+import { addOrder, updateSelectedOrder } from '../slice/OrderSlice';
 import { categoryExists, getExtraFilters, getMenuFromFB, subExists } from '../functions/menu';
 import { isPortrait, objectsEqual } from '../functions/util';
 
@@ -41,11 +40,12 @@ const Title = styled.h4`
 const mapDispatchToProps = { 
     addOrder,
     getMenuFromFB,
-    updateMenuList
+    updateSelectedOrder
 };
 
 const mapStateToProps = state => ({
-    menuList: state.menu.menuList
+    menuList: state.menu.menuList,
+    selectedOrder: state.order.selectedOrder
 });
 
 class MenuPanel extends React.Component {
@@ -78,8 +78,18 @@ class MenuPanel extends React.Component {
         this.setState({filterBy});
     }
 
-    handleMenuAdd = ({name, price}) => {
-        this.props.addOrder({name, price});
+    handleMenuAdd = (menu) => {
+        let { selectedOrder } = this.props;
+        let newOrder = menu;
+        
+        if (menu.category === CATEGORY.extras && selectedOrder){
+            newOrder = {
+                ...menu, 
+                parentId: selectedOrder.parentId ?? selectedOrder.orderId
+            }
+        }
+        
+        this.props.addOrder(newOrder);
     }
 
     renderSubcategory(catId, subId){

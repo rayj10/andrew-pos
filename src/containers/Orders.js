@@ -5,6 +5,8 @@ import { connect } from 'react-redux'
 import OrderEntry from '../components/OrderEntry';
 import ActionButtons from '../components//ActionButtons';
 import { isPortrait } from '../functions/util';
+import { updateSelectedOrder } from '../slice/OrderSlice';
+import { CATEGORY } from '../constants/menu';
 
 const Container = styled.div`
     display: flex;
@@ -47,15 +49,23 @@ const Total = styled.div`
 `;
 
 const mapStateToProps = state => ({
-    orderLine: state.order.orderLine
+    orderLine: state.order.orderLine,
+    selectedOrder: state.order.selectedOrder
 });
+
+const mapDispatchToProps = { 
+    updateSelectedOrder
+};
 
 class Orders extends React.Component{
     constructor(props) {
         super(props);
         this.state = {
-            selectedOrder: null
         };
+    }
+
+    handleSelect = (item) => {
+        this.props.updateSelectedOrder(item)
     }
 
     calculateTotal = () => {
@@ -70,19 +80,36 @@ class Orders extends React.Component{
 
     consolidateOrder = () => {
         let consolidatedOrders = [];
-        let orderIdx = -1;
 
         this.props.orderLine.forEach(item => { 
-            orderIdx = consolidatedOrders.findIndex(entry => entry.name === item.name);
-            if (orderIdx >= 0){
-                consolidatedOrders[orderIdx].qty += 1;
-                consolidatedOrders[orderIdx].price += item.price;
+            if (item.category !== CATEGORY.extras || !item.parentId) {
+                let extras = [];
+                this.props.orderLine.forEach(line => {
+                    if (line.parentId === item.orderId)
+                        extras.push(line);
+                });
+                let orderIdx = consolidatedOrders.findIndex(entry => 
+                    entry.name === item.name && 
+                    entry.extras.length === 0
+                );
+
+                if (orderIdx >= 0 && extras.length === 0){
+                    consolidatedOrders[orderIdx].qty += 1;
+                    consolidatedOrders[orderIdx].price += item.price;
+                }
+                else {
+                    consolidatedOrders.push({
+                        ...item,
+                        extras: extras,
+                        qty: 1
+                    });
+                    if (extras.length > 0){
+                        extras.forEach(ex => {
+                            consolidatedOrders.push(ex);
+                        })
+                    }
+                }              
             }
-            else
-                consolidatedOrders.push({
-                    ...item,
-                    qty: 1
-                })
         });
 
         return consolidatedOrders;
@@ -99,8 +126,8 @@ class Orders extends React.Component{
                             return <OrderEntry 
                                 key={idx} 
                                 {...item}
-                                onClick={() => this.setState({selectedOrder: item.name})}
-                                selected={this.state.selectedOrder === item.name}
+                                onClick={() => this.handleSelect(item)}
+                                selected={this.props.selectedOrder.orderId === item.orderId}
                             />
                         })
                     }
@@ -115,4 +142,4 @@ class Orders extends React.Component{
         </Container>
     }
 }
-export default connect(mapStateToProps)(Orders)
+export default connect(mapStateToProps, mapDispatchToProps)(Orders)

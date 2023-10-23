@@ -15,6 +15,10 @@ const mapDispatchToProps = {
     removeLastEntry, resetOrder, deleteEntry
 };
 
+const mapStateToProps = state => ({
+    selectedOrder: state.order.selectedOrder
+});
+
 const Container = styled.div`
     display: flex;
     flex-direction: ${props => props.portraitMode ? 'column' : 'row'};
@@ -82,4 +86,4 @@ class ActionButtons extends React.Component{
         </Container>
     }
 }
-export default connect(null, mapDispatchToProps)(ActionButtons)
+export default connect(mapStateToProps, mapDispatchToProps)(ActionButtons)
