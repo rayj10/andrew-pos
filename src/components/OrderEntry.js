@@ -24,6 +24,6 @@ export default function OrderEntry({
     return <Container selected={selected} onClick={onClick}>
         <Data>{name}</Data>
         <Data style={{textAlign: 'center'}}>{qty}</Data>
-        <Data style={{textAlign: 'end'}}>{`$${price}`}</Data>
+        <Data style={{textAlign: 'end'}}>{`$${parseFloat(price).toFixed(2)}`}</Data>
     </Container>
 }

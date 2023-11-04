@@ -80,7 +80,7 @@ class Orders extends React.Component{
             total += Number(item.price);
         })
 
-        return total;
+        return parseFloat(total).toFixed(2);
     }
 
     consolidateOrder = () => {
@@ -100,7 +100,7 @@ class Orders extends React.Component{
 
                 if (orderIdx >= 0 && extras.length === 0){
                     consolidatedOrders[orderIdx].qty += 1;
-                    consolidatedOrders[orderIdx].price += item.price;
+                    consolidatedOrders[orderIdx].price += Number(item.price);
                 }
                 else {
                     consolidatedOrders.push({
