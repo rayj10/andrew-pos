@@ -22,7 +22,7 @@ const mapStateToProps = state => ({
 const Container = styled.div`
     display: flex;
     flex-direction: ${props => props.portraitMode ? 'column' : 'row'};
-    width: ${props => props.portraitMode ? '80%' : '30%'};
+    width: 30%;
     margin: 5px;
 `;
 
