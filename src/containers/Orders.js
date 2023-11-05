@@ -11,7 +11,7 @@ import { CATEGORY } from '../constants/menu';
 const Container = styled.div`
     display: flex;
     flex-direction: ${props => props.portraitMode ? 'row' : 'column'};
-    width: ${props => props.portraitMode ? '80%' : '30%'};
+    width: ${props => props.portraitMode ? '100%' : '30%'};
 `;
 
 const OrderContainer = styled.div`
